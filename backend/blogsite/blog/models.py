@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 class Post(models.Model):
@@ -8,12 +9,12 @@ class Post(models.Model):
     content = models.TextField('CONTENT')
     create_dt = models.DateTimeField('CREATE DATE', auto_now_add=True)
     modify_dt = models.DateTimeField('MODIFY DATE', auto_now=True)
-    # tags =
+    tags = TaggableManager(blank=True)
     # owner =
 
 
     def __str__(self):
-        pass
+        return self.title
 
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=(self.id,))

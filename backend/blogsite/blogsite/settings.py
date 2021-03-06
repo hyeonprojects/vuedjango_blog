@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'taggit',
     'blog',
 ]
 
@@ -121,3 +122,5 @@ USE_TZ = False # UTC 시간으로 바뀌기 때문에 약간 DB에서 시간을 
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+TAGGIT_CASE_INSENSITIVE = True
