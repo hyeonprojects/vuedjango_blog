@@ -3,10 +3,6 @@ module.exports = {
     'vuetify'
   ],
 
-  devServer: {
-    index: 'home.html',
-  },
-
   outputDir: 'dist',
   publicPath: '/',
   assetsDir: 'static',
