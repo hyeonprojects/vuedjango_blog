@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "filemanager-webpack-plugin-fixed": "^2.0.9",
     "vue": "^2.6.11",
     "vuetify": "^2.4.0"
   },

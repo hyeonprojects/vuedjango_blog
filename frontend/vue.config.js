@@ -1,3 +1,5 @@
+const FileManagerPlugin = require('filemanager-webpack-plugin-fixed');
+
 module.exports = {
   transpileDependencies: [
     'vuetify'
@@ -36,5 +38,27 @@ module.exports = {
       title: 'blog/post_detail.html',
       minify: false,
     },
+  },
+
+  configureWebpack: {
+    plugins: [
+      new FileManagerPlugin({
+        onStart: {
+          delete: [
+            '../blogsite/static/**/',
+            '../blogsite/template/**/',
+          ],
+        },
+
+        onEnd: {
+          copy: [
+            { source: 'dist/static', destination: '../blogsite/static/'},
+            { source: 'dist/favicon.ico', destination: '../blogsite/static/img/'},
+            { source: 'dist/home.html', destination: '../blogsite/templates/'},
+            { source: 'dist/post*.html', destination: '../blogsite/templates/blog/'},
+          ],
+        }
+      }),
+    ]
   },
 }
