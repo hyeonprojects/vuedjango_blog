@@ -45,17 +45,17 @@ module.exports = {
       new FileManagerPlugin({
         onStart: {
           delete: [
-            '../blogsite/static/**/',
-            '../blogsite/template/**/',
+            '../backend/blogsite/static/**/',
+            '../backend/blogsite/template/**/',
           ],
         },
 
         onEnd: {
           copy: [
-            { source: 'dist/static', destination: '../blogsite/static/'},
-            { source: 'dist/favicon.ico', destination: '../blogsite/static/img/'},
-            { source: 'dist/home.html', destination: '../blogsite/templates/'},
-            { source: 'dist/post*.html', destination: '../blogsite/templates/blog/'},
+            { source: 'dist/static', destination: '../backend/blogsite/static/'},
+            { source: 'dist/favicon.ico', destination: '../backend/blogsite/static/img/'},
+            { source: 'dist/home.html', destination: '../backend/blogsite/templates/'},
+            { source: 'dist/post*.html', destination: '../backend/blogsite/templates/blog/'},
           ],
         }
       }),
