@@ -7,6 +7,7 @@ module.exports = {
 
   devServer: {
     index: 'home.html',
+    proxy: 'http://127.0.0.1:8000', //xhr only
   },
 
   outputDir: 'dist',

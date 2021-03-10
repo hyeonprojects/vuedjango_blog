@@ -145,7 +145,7 @@
       <template v-slot:no-data>
         <v-btn
           color="primary"
-          @click="initialize"
+          @click="fetchPostList"
         >
           Reset
         </v-btn>
@@ -155,6 +155,8 @@
 </template>
 
 <script>
+  import axios from "axios";
+
   export default {
     name: 'HelloWorld',
     data: () => ({
@@ -162,15 +164,15 @@
     dialogDelete: false,
     headers: [
       {
-        text: 'Dessert (100g serving)',
+        text: 'ID',
         align: 'start',
         sortable: false,
         value: 'name',
       },
-      { text: '제목', value: 'calories' },
-      { text: '요약', value: 'fat' },
-      { text: '수정일', value: 'carbs' },
-      { text: '작성일', value: 'protein' },
+      { text: '제목', value: 'title' },
+      { text: '요약', value: 'description' },
+      { text: '수정일', value: 'modify_dt' },
+      { text: '작성일', value: 'owner' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     posts: [],
@@ -207,34 +209,22 @@
   },
 
   created () {
-    this.initialize()
+    this.fetchPostList();
   },
 
   methods: {
-    initialize () {
-      this.posts = [
-        {
-          name: '1',
-          calories: 'Django 학습 마스터',
-          fat: '2019년 12월 장고 3.0버전 발표함',
-          carbs: '2021-12-15',
-          protein: '이동현',
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-      ]
+    fetchPostList() {
+      console.log("fetchPostList()...");
+
+      axios.get('/api/post/list/')
+      .then(res => {
+        console.log('post get res', res);
+        this.posts = res.data;
+      })
+      .catch(err => {
+        console.log('post get err. response', err.response);
+        alert(err.response.status + ' ' + err.response.statusText);
+      });
     },
 
     editItem (item) {
