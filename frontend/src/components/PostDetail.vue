@@ -14,7 +14,7 @@
             <p style="white-space: pre-wrap;"> {{post.content}} </p>
             <div>
               <strong>TAGS:</strong>
-              <v-chip class="ma-2" outlined v-for="(tag, index) in post.tags" :key="index"> Pyrthon </v-chip>
+              <v-chip class="ma-2" outlined v-for="(tag, index) in post.tags" :key="index"> {{ tag }} </v-chip>
             </div>
           </v-card>
         </v-col>
@@ -29,17 +29,11 @@
           </v-card>
           <v-card class="pa-2" tile>
             <h2>Tag Cloud</h2>
-            <v-chip class="ma-2" color="green" text-color="white">
+            <v-chip v-for="(tag, index) in tagCloud" :key="index" class="ma-2" color="green" text-color="white">
               <v-avatar left class="green darken-4">
                 1
               </v-avatar>
-              Python
-            </v-chip>
-            <v-chip class="ma-2" color="green" text-color="white">
-              <v-avatar left class="green darken-4">
-                1
-              </v-avatar>
-              Django
+              {{ tag.name }}
             </v-chip>
           </v-card>
         </v-col>
@@ -55,18 +49,20 @@
 
     data: () => ({
       post: {},
+      tagCloud: [],
     }),
 
     created() {
       console.log("created() ...");
       const postId = 2;
       this.fetchPostDetail(postId);
+      this.fetchTagCloud();
     },
 
     methods: {
       fetchPostDetail(postId) {
-        console.log("fetchPostDetail()...");
-        axios.get('/api/post/${postId}/')
+        console.log("fetchPostDetail()...", postId);
+        axios.get(`/api/post/${postId}/`)
         .then(res => {
           console.log("post detail get res", res);
           this.post = res.data;
@@ -76,6 +72,20 @@
           alert(err.response.status + ' ' + err.response.statusText);
         });
       },
+
+      fetchTagCloud() {
+        console.log("fetchTagCloud()...");
+        axios.get('/api/tag/cloud/')
+        .then(res => {
+          console.log("tag cloud get res", res);
+          this.tagCloud = res.data;
+        })
+        .catch(err => {
+          console.log("tag cloud get err.response", err.response);
+          alert(err.response.status + ' ' + err.response.statusText);
+        });
+      },
+
     },
   }
 </script>
