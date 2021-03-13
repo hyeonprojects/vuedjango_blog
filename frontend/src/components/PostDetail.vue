@@ -29,9 +29,9 @@
           </v-card>
           <v-card class="pa-2" tile>
             <h2>Tag Cloud</h2>
-            <v-chip v-for="(tag, index) in tagCloud" :key="index" class="ma-2" color="green" text-color="white">
-              <v-avatar left class="green darken-4">
-                1
+            <v-chip v-for="(tag, index) in tagCloud" :key="index" class="ma-2" :color="tag.color" text-color="white">
+              <v-avatar left :class="tag.color + ' darken-4'">
+                {{ tag.count }}
               </v-avatar>
               {{ tag.name }}
             </v-chip>
@@ -79,6 +79,11 @@
         .then(res => {
           console.log("tag cloud get res", res);
           this.tagCloud = res.data;
+          this.tagCloud.forEach(element => {
+            if (element.weight === 3) element.color = 'green';
+            else if (element.weight === 2) element.color = 'blue-grey';
+            else if (element.weight === 1) element.color = 'grey';
+          })
         })
         .catch(err => {
           console.log("tag cloud get err.response", err.response);
