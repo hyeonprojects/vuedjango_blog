@@ -209,20 +209,27 @@
   },
 
   created () {
+    const params = new URL(location).searchParams;
+    const paramTag = params.get('tagname');
+
     this.fetchPostList();
   },
 
   methods: {
     fetchPostList() {
-      console.log("fetchPostList()...");
+      console.log("fetchPostList()..." , paramTag);
 
-      axios.get('/api/post/list/')
+      let getUrl = '';
+      if (paramTag) getUrl = `/api/post/list/?tagname=${paramTag}`;
+      else getUrl = '/api/post/list/';
+
+      axios.get(getUrl)
       .then(res => {
         console.log('post get res', res);
         this.posts = res.data;
       })
       .catch(err => {
-        console.log('post get err. response', err.response);
+        console.log('post list get err. response', err.response);
         alert(err.response.status + ' ' + err.response.statusText);
       });
     },
