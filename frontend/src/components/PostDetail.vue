@@ -30,7 +30,7 @@
           <v-card class="pa-2" tile>
             <h2>Tag Cloud</h2>
             <v-chip v-for="(tag, index) in tagCloud" :key="index" @click="serverPage(tag.name)"
-             class="ma-2" :color="tag.color" text-color="white">
+             class="ma-2 my-hover" :color="tag.color" text-color="white">
               <v-avatar left :class="tag.color + ' darken-4'">
                 {{ tag.count }}
               </v-avatar>
@@ -55,7 +55,7 @@
 
     created() {
       console.log("created() ...");
-      const postId = 2;
+      const postId = location.pathname.split('/')[3] || 2;
       this.fetchPostDetail(postId);
       this.fetchTagCloud();
     },

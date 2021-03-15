@@ -6,12 +6,15 @@
       sort-by="name"
       class="elevation-1"
       :items-per-page="5"
+      @click:row="serverPage"
     >
       <template v-slot:top>
         <v-toolbar
           flat
         >
-          <v-toolbar-title>Post List</v-toolbar-title>
+          <v-toolbar-title>Post List
+            <span v-if="tagname" class="body-1 font-italic ml-3">(with {{ tagname }} tagged)</span>
+          </v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
@@ -162,6 +165,7 @@
     data: () => ({
     dialog: false,
     dialogDelete: false,
+    tagname: '',
     headers: [
       {
         text: 'ID',
@@ -210,17 +214,16 @@
 
   created () {
     const params = new URL(location).searchParams;
-    const paramTag = params.get('tagname');
-
+    this.tagname = params.get('tagname');
     this.fetchPostList();
   },
 
   methods: {
     fetchPostList() {
-      console.log("fetchPostList()..." , paramTag);
+      console.log("fetchPostList()..." , this.tagname);
 
       let getUrl = '';
-      if (paramTag) getUrl = `/api/post/list/?tagname=${paramTag}`;
+      if (this.tagname) getUrl = `/api/post/list/?tagname=${this.tagname}`;
       else getUrl = '/api/post/list/';
 
       axios.get(getUrl)
@@ -232,6 +235,11 @@
         console.log('post list get err. response', err.response);
         alert(err.response.status + ' ' + err.response.statusText);
       });
+    },
+
+    serverPage(item) {
+        console.log("serverPage()...", item);
+        location.href = `/blog/post/${item.id}/`;
     },
 
     editItem (item) {
@@ -278,3 +286,9 @@
   },
 }
 </script>
+
+<style scoped>
+.v-data-table >>> tbody >>> tr {
+  cursor: pointer;
+}
+</style>
