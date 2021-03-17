@@ -1,3 +1,5 @@
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.db.models import Count
 from django.http import JsonResponse
 from django.views.generic.detail import BaseDetailView
@@ -50,3 +52,20 @@ class ApiTagCloudLV(BaseListView):
         #     })
         tagList = make_tag_cloud(qs)
         return JsonResponse(data=tagList, safe=False, status=200)
+
+
+class ApiLoginView(LoginView):
+
+    def form_valid(self, form):
+        user = form.get_user()
+        login(self.request, user)
+        # userDict = vars(user)
+        # del userDict['_state'], userDict['password']
+        userDict = {
+            'id': user.id,
+            'username': user.username,
+        }
+        return JsonResponse(data=userDict, safe=True, status=200)
+
+    def form_invalid(self, form):
+        return JsonResponse(data=form.errors, safe=True, status=400)
