@@ -40,24 +40,28 @@
         <v-menu offset-y left bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn text v-bind="attrs" v-on="on">
-              <v-icon>mdi-account</v-icon>Anonymous
+              <v-icon>mdi-account</v-icon> {{ me.username }}
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
   
           <v-list>
-            <v-list-item @click="dialog.login = true">
-              <v-list-item-title>Login</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="dialog.register = true">
-              <v-list-item-title>Register</v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Logout</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="dialog.pwdchg = true">
-              <v-list-item-title>Password change</v-list-item-title>
-            </v-list-item>
+            <template v-if="me.username === 'Anonymouse'">
+              <v-list-item @click="dialogOpen('login')">
+                <v-list-item-title>Login</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="dialogOpen('register')">
+                <v-list-item-title>Register</v-list-item-title>
+              </v-list-item>
+            </template>
+            <template v-else>
+              <v-list-item>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="dialogOpen('pwdchg')">
+                <v-list-item-title>Password change</v-list-item-title>
+              </v-list-item>
+            </template>
           </v-list>
         </v-menu>
     </v-app-bar>
@@ -70,7 +74,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-text>
-          <v-form id="login-form">
+          <v-form id="login-form" ref="loginForm">
             <v-text-field label="username" name="username" prepend-icon="mdi-account" type="text">
             </v-text-field>
             <v-text-field label="password" name="password" prepend-icon="mdi-lock" type="password">
@@ -93,7 +97,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-text>
-          <v-form>
+          <v-form id="register-form" ref="registerForm">
             <v-text-field label="username" name="username" prepend-icon="mdi-account" type="text">
             </v-text-field>
             <v-text-field label="password" name="password1" prepend-icon="mdi-lock" type="password">
@@ -104,8 +108,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="gray" @click="dialog.register = false">Cancel</v-btn>
-          <v-btn color="success" @click="dialog.register = false">Register</v-btn>
+          <v-btn text color="gray" @click="cancel('register')">Cancel</v-btn>
+          <v-btn color="success" @click="save('regitser')">Register</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -118,7 +122,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-text>
-          <v-form>
+          <v-form id="pwdchg-From" ref="pwdchgForm">
             <v-text-field label="old_password" name="old_password" prepend-icon="mdi-lock" type="password">
             </v-text-field>
             <v-text-field label="new password" name="new_password1" prepend-icon="mdi-lock" type="password">
@@ -129,8 +133,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="gray" @click="dialog.pwdchg = false">Cancel</v-btn>
-          <v-btn color="warning" @click="dialog.pwdchg = false">Password change</v-btn>
+          <v-btn text color="gray" @click="cancel('pwdchg')">Cancel</v-btn>
+          <v-btn color="warning" @click="save('pwdchg')">Password change</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -151,15 +155,37 @@ export default {
         register: false,
         pwdchg: false,
       },
-      me: {},
+      me: { username: 'Anonymouse'},
     }),
 
     methods : {
+      dialogOpen(kind) {
+        console.log('dialogOpen()...', kind);
+        if (kind === 'login') {
+          this.dialog.login = true;
+        }
+        else if (kind === 'register'){
+          this.dialog.register = true;
+        }
+        else if (kind === 'pwdchg'){
+          this.dialog.pwdchg = true;
+        }
+      },
+
       cancel(kind) {
         console.log("cancel()...", kind);
-        if (kind === 'login') this.dialog.login = false;
-        else if (kind === 'register') this.dialog.register = false;
-        else if (kind === 'pwdchg') this.dialog.pwdchg = false;
+        if (kind === 'login') {
+          this.dialog.login = false;
+          this.$refs.loginForm.reset();
+        }
+        else if (kind === 'register'){
+          this.dialog.register = false;
+          this.$refs.registerForm.reset();
+        }
+        else if (kind === 'pwdchg'){
+          this.dialog.pwdchg = false;
+          this.$refs.pwdchgForm.reset();
+        }
       },
 
       save(kind) {
@@ -167,12 +193,15 @@ export default {
         if (kind === 'login') {
           this.login();
           this.dialog.login = false;
+          this.$refs.loginForm.reset();
         } else if (kind === 'register') {
           this.register();
           this.dialog.register = false;
+          this.$refs.registerForm.reset();
         } else if (kind === 'pwdchg') {
           this.pwdchg();
           this.dialog.pwdchg = false;
+          this.$refs.pwdchgForm.reset();
         }
       },
 
@@ -187,6 +216,20 @@ export default {
         .catch(err => {
           console.log("login post err. response", err.response);
           alert("login nok");
+        });
+      },
+
+      register() {
+        console.log("register()...");
+        const postData = new FormData(document.getElementById('register-form'))
+        axios.post('/api/register/', postData)
+        .then(res => {
+          console.log("register post res", res);
+          alert(`user ${res.data.username} created OK`)
+        })
+        .catch(err => {
+          console.log("register post err. response", err.response);
+          alert("register nok");
         });
       },
     },
