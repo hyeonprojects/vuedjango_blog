@@ -46,7 +46,7 @@
           </template>
   
           <v-list>
-            <template v-if="me.username === 'Anonymouse'">
+            <template v-if="me.username === 'Anonymous'">
               <v-list-item @click="dialogOpen('login')">
                 <v-list-item-title>Login</v-list-item-title>
               </v-list-item>
@@ -55,7 +55,7 @@
               </v-list-item>
             </template>
             <template v-else>
-              <v-list-item>
+              <v-list-item @click="logout">
                 <v-list-item-title>Logout</v-list-item-title>
               </v-list-item>
               <v-list-item @click="dialogOpen('pwdchg')">
@@ -109,7 +109,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text color="gray" @click="cancel('register')">Cancel</v-btn>
-          <v-btn color="success" @click="save('regitser')">Register</v-btn>
+          <v-btn color="success" @click="save('register')">Register</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -122,7 +122,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-text>
-          <v-form id="pwdchg-From" ref="pwdchgForm">
+          <v-form id="pwdchg-form" ref="pwdchgForm">
             <v-text-field label="old_password" name="old_password" prepend-icon="mdi-lock" type="password">
             </v-text-field>
             <v-text-field label="new password" name="new_password1" prepend-icon="mdi-lock" type="password">
@@ -155,8 +155,12 @@ export default {
         register: false,
         pwdchg: false,
       },
-      me: { username: 'Anonymouse'},
+      me: { username: 'Anonymous'},
     }),
+
+    created() {
+      this.getUserInfo();
+    },
 
     methods : {
       dialogOpen(kind) {
@@ -220,19 +224,64 @@ export default {
       },
 
       register() {
-        console.log("register()...");
-        const postData = new FormData(document.getElementById('register-form'))
-        axios.post('/api/register/', postData)
-        .then(res => {
-          console.log("register post res", res);
-          alert(`user ${res.data.username} created OK`)
-        })
-        .catch(err => {
-          console.log("register post err. response", err.response);
-          alert("register nok");
-        });
+        console.log("register()....");
+        const postData = new FormData(document.getElementById("register-form"));
+        axios
+          .post("/api/register/", postData)
+          .then((res) => {
+            console.log("register post res", res);
+            alert(`user ${res.data.username} created Ok`);
+          })
+          .catch((err) => {
+            console.log("register post erro.response", err.response);
+            alert("register NOK");
+          })
+      },
+
+      logout() {
+        console.log("logout()...");
+        axios.get('/api/logout/')
+          .then((res) => {
+            console.log("logout post res", res);
+            alert(`user ${this.me.username} logout Ok`);
+            this.me = { username: 'Anonymous'};
+          })
+          .catch((err) => {
+            console.log("logout post erro.response", err.response);
+            alert("logout NOK");
+          })
+      },
+
+      pwdchg() {
+        console.log("pwdchg()....");
+        const postData = new FormData(document.getElementById("pwdchg-form"));
+        axios
+          .post("/api/pwdchg/", postData)
+          .then((res) => {
+            console.log("pwdchg post res", res);
+            alert(`user ${this.me.username} password change Ok`);
+          })
+          .catch((err) => {
+            console.log("password change post erro.response", err.response);
+            alert("password change NOK");
+          })
+      },
+
+      getUserInfo() {
+        console.log("getUserInfor()...");
+        axios.get('/api/me/')
+          .then(res => {
+            console.log("getuserinfor get res", res);
+            this.me = res.data;
+          })
+          .catch(err => {
+            console.log("getuserinfo get err.response", err.response);
+            alert(err.response.status + ' ' + err.response.statusText);
+          });
       },
     },
+
+    
 }
 </script>
 
