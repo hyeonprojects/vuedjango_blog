@@ -123,3 +123,16 @@ class ApiMeView(View):
                 'username': 'Anonymous',
             }
         return JsonResponse(data=userDict, safe=True, status=200)
+
+
+class ApiPostCV(BaseCreateView):
+    model = Post
+    fields = '__all__'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        post =  obj_to_post(self.object)
+        return JsonResponse(data=post, safe=True, status=200)
+
+    def form_invalid(self, form):
+        pass

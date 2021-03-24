@@ -13,4 +13,6 @@ urlpatterns = [
     path('logout/', views.ApiLogoutView.as_view(), name='logout'),
     path('pwdchg/', views.ApiPwdchgView.as_view(), name='pwdchg'),
     path('me/', views.ApiMeView.as_view(), name='me'),
+
+    path('post/create/', views.ApiPostCV.as_view(), name='post_create'),
 ]
