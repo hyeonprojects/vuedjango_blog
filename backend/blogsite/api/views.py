@@ -135,4 +135,4 @@ class ApiPostCV(BaseCreateView):
         return JsonResponse(data=post, safe=True, status=200)
 
     def form_invalid(self, form):
-        pass
+        return JsonResponse(data=form.errors, safe=True, status=400)
