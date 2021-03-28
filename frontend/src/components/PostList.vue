@@ -60,9 +60,10 @@
             <v-text-field
               label="DESCRIPTION"
               name="description"
-              :value="editedItem.description"
+              v-model="editedItem.content"
             ></v-text-field>
             <v-textarea
+              outlined
               label="CONTENT"
               name="content"
               :value="editedItem.content"
@@ -93,6 +94,7 @@
 
 <script>
 import axios from "axios";
+import EventBus from "./event_bus";
 
 export default {
   name: "PostList",
@@ -117,6 +119,7 @@ export default {
     editedIndex: -1,
     editedItem: {},
     actionKind: "",
+    me: { username: "Anonymous" },
   }),
 
   computed: {
@@ -131,6 +134,10 @@ export default {
     const params = new URL(location).searchParams;
     this.tagname = params.get("tagname");
     this.fetchPostList();
+
+    EventBus.$on("me_change", (val) => {
+      this.me = val;
+    });
   },
 
   methods: {
@@ -189,11 +196,11 @@ export default {
       axios
         .post("/api/post/create/", postData)
         .then((res) => {
-          console.log("create post get res", res);
+          console.log("create post post get res", res);
           this.posts.push(res.data);
         })
         .catch((err) => {
-          console.log("create post err.response", err.response);
+          console.log("create post post err.response", err.response);
           alert(err.response.status + " " + err.response.statusText);
         });
     },
@@ -201,14 +208,15 @@ export default {
     updatePost() {
       console.log("updatePost()...");
       const postData = new FormData(document.getElementById("post-form"));
+      postData.set("owner", this.me.id);
       axios
         .post(`/api/post/${this.editedItem.id}/update/`, postData)
         .then((res) => {
-          console.log("update post get res", res);
+          console.log("update post post res", res);
           this.posts.splice(this.editedIndex, 1, res.data);
         })
         .catch((err) => {
-          console.log("update post err.response", err.response);
+          console.log("update post post err.response", err.response);
           alert(err.response.status + " " + err.response.statusText);
         });
     },
@@ -219,12 +227,12 @@ export default {
       axios
         .delete(`/api/post/${item.id}/delete/`)
         .then((res) => {
-          console.log("post delete res", res);
+          console.log("delete post delete res", res);
           const index = this.posts.indexOf(item);
           this.posts.splice(index, 1);
         })
         .catch((err) => {
-          console.log("update post err.response", err.response);
+          console.log("delete post delete err.response", err.response);
           alert(err.response.status + " " + err.response.statusText);
         });
     },

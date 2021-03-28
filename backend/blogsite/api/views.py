@@ -125,6 +125,20 @@ class ApiMeView(View):
         return JsonResponse(data=userDict, safe=True, status=200)
 
 
+class ApiPostUV(BaseCreateView):
+    model = Post
+    fields = '__all__'
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        self.object = form.save()
+        post =  obj_to_post(self.object)
+        return JsonResponse(data=post, safe=True, status=201)
+
+    def form_invalid(self, form):
+        return JsonResponse(data=form.errors, safe=True, status=400)
+
+
 class ApiPostCV(BaseCreateView):
     model = Post
     fields = '__all__'
