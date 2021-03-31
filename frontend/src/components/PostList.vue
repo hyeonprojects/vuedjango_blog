@@ -209,6 +209,8 @@ export default {
       console.log("updatePost()...");
       const postData = new FormData(document.getElementById("post-form"));
       postData.set("owner", this.me.id);
+      console.log("posdata owner : ", postData.get("owner"));
+      console.log("me id : ", this.me.id);
       axios
         .post(`/api/post/${this.editedItem.id}/update/`, postData)
         .then((res) => {
@@ -217,7 +219,7 @@ export default {
         })
         .catch((err) => {
           console.log("update post post err.response", err.response);
-          alert(err.response.status + " " + err.response.statusText);
+          alert(err.response.status + " : " + err.response.statusText);
         });
     },
 

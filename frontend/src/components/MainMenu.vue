@@ -202,7 +202,7 @@ export default {
   watch: {
     me(newVal, oldVal) {
       console.log("watch.me()...", newVal, oldVal);
-      EventBus.$emit("me_change", newVal);
+      EventBus.$emit("me_chage", newVal);
     },
   },
 
