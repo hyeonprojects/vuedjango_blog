@@ -6,11 +6,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic.base import View
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseCreateView
+from django.views.generic.edit import BaseCreateView, BaseDeleteView
 from django.views.generic.list import BaseListView
 from taggit.models import Tag
 
 from accounts.forms import MyUserCreationForm
+from accounts.views import MyLoginRequiredMixin, OwnerWithMixin
 from api.view_util import obj_to_post, prev_next_post, make_tag_cloud
 from blog.models import Post
 
@@ -125,7 +126,7 @@ class ApiMeView(View):
         return JsonResponse(data=userDict, safe=True, status=200)
 
 
-class ApiPostCV(BaseCreateView):
+class ApiPostCV(MyLoginRequiredMixin, BaseCreateView):
     model = Post
     fields = '__all__'
 
@@ -139,7 +140,7 @@ class ApiPostCV(BaseCreateView):
         return JsonResponse(data=form.errors, safe=True, status=400)
 
 
-class ApiPostUV(BaseCreateView):
+class ApiPostUV(OwnerWithMixin, BaseCreateView):
     model = Post
     fields = '__all__'
 
@@ -150,3 +151,11 @@ class ApiPostUV(BaseCreateView):
 
     def form_invalid(self, form):
         return JsonResponse(data=form.errors, safe=True, status=400)
+
+
+class ApiPostDelV(OwnerWithMixin, BaseDeleteView):
+    model = Post
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse(data={}, safe=True, status=204)

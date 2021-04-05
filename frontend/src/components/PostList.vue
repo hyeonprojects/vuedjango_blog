@@ -51,6 +51,7 @@
               label="ID"
               name="id"
               :value="editedItem.id"
+              readonly
             ></v-text-field>
             <v-text-field
               label="TITLE"
@@ -167,6 +168,10 @@ export default {
 
     dialogOpen(actionKind, item) {
       console.log("dialogOpen()...", actionKind);
+      if (this.me.username === "Anonymous") {
+        alert("Please login first!!");
+        return;
+      }
       this.actionKind = actionKind;
       if (actionKind === "create") {
         this.editedIndex = -1;
@@ -225,6 +230,10 @@ export default {
 
     deletePost(item) {
       console.log("deletePost()...", item);
+      if (this.me.username === "Anonymous") {
+        alert("Please login first!!");
+        return;
+      }
       if (!confirm("Are you sure to delete ?")) return;
       axios
         .delete(`/api/post/${item.id}/delete/`)
